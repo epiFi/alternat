@@ -81,8 +81,20 @@ def get_nat_gateway_id(vpc_id, subnet_id):
             ]
         )
     except botocore.exceptions.ClientError as error:
-        logger.error("Unable to describe nat gateway")
-        raise error
+        logger.error("Unable to describe nat gateway in subnet "+subnet_id)
+
+    if len(nat_gateways.get("NatGateways")) < 1:
+        try:
+            nat_gateways = ec2_client.describe_nat_gateways(
+                Filters=[
+                    {
+                    "Name": "vpc-id",
+                    "Values": [vpc_id]
+                    }
+                ]
+            )
+        except botocore.exceptions.ClientError as error:
+            logger.error("Unable to describe nat gateway in vpc "+vpc_id)
 
     logger.debug("NAT Gateways: %s", nat_gateways)
     if len(nat_gateways.get("NatGateways")) < 1:
