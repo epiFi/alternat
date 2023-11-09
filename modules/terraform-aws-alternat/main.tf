@@ -176,6 +176,10 @@ data "cloudinit_config" "config" {
   base64_encode = true
   part {
     content_type = "text/x-shellscript"
+    content      = file("${path.module}/../../scripts/node-exporter.sh")
+  }
+  part {
+    content_type = "text/x-shellscript"
     content = templatefile("${path.module}/alternat.conf.tftpl", {
       eip_allocation_ids_csv = join(",", local.nat_instance_eip_ids),
       route_table_ids_csv    = join(",", each.value)
